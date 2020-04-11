@@ -1,7 +1,9 @@
 import React from 'react';
 
-const SendComponent = props => {
-    return <div>send</div>;
+import SendComponent from './Send';
+
+const SendContainer = props => {
+    return <SendComponent />;
 };
 
-export default SendComponent;
+export default SendContainer;

@@ -1,7 +1,9 @@
 import React from 'react';
 
-const ViewComponent = props => {
-    return <div>view</div>;
+import ViewComponent from './View';
+
+const ViewContainer = props => {
+    return <ViewComponent />;
 };
 
-export default ViewComponent;
+export default ViewContainer;
