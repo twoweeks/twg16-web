@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
-import { ReCAPTCHA } from 'react-google-recaptcha';
+import ReCAPTCHA from 'reaptcha';
 
 import Link from '../Other/Link';
 
@@ -10,8 +10,9 @@ const { TextArea } = Input;
 
 const SendComponent = props => {
     const { config } = props;
-    const { handleSubmit, reCaptchaRef } = props;
+    const { handleSubmit } = props;
     const { getInitialValues, setInitialValue } = props;
+    const { reCaptchaVerify, setReCaptchaVerify, reCaptchaRef } = props;
 
     return (
         <div className="send">
@@ -46,12 +47,28 @@ const SendComponent = props => {
                     <Input placeholder="Адвенчура" onInput={setInitialValue} />
                 </Form.Item>
 
-                <Form.Item label="Описание игры" name="description">
+                <Form.Item label="Описание игры" extra="Максимум 200 символов, без переносов на новую строку" name="description">
                     <TextArea
                         rows={4}
+                        maxLength="200"
                         placeholder="Пользователь может играть лесными эльфами, охраной дворца и злодеем. И если пользователь играет эльфами то эльфы в лесу, домики деревяные набигают солдаты дворца и злодеи. Можно грабить корованы..."
                         onInput={setInitialValue}
                     />
+                </Form.Item>
+
+                <Form.Item label="Инструменты" extra="Максимум 100 символов, без переносов на новую строку" name="tools">
+                    <TextArea rows={2} maxLength="200" placeholder="Unity, Blender, Paint" onInput={setInitialValue} />
+                </Form.Item>
+
+                <Form.Item
+                    label="Архив с игрой"
+                    name="archive"
+                    extra={`Рекомендуется использовать Яндекс.Диск или Google Drive`}
+                    rules={[
+                        { type: 'url', message: 'Введите валидный URL' },
+                        { required: true, message: 'Добавьте ссылку на архив' },
+                    ]}>
+                    <Input placeholder="https://yadi.sk" />
                 </Form.Item>
 
                 <Form.Item
@@ -75,10 +92,20 @@ const SendComponent = props => {
                     </Checkbox>
                 </Form.Item>
 
-                <ReCAPTCHA ref={reCaptchaRef} size="invisible" sitekey={config.api_keys.recaptcha} />
+                <Form.Item className="send__form-item-offset">
+                    <ReCAPTCHA
+                        size="normal"
+                        ref={reCaptchaRef}
+                        sitekey={config.api_keys.recaptcha}
+                        onVerify={token => {
+                            setReCaptchaVerify(true);
+                            console.log(token);
+                        }}
+                    />
+                </Form.Item>
 
                 <Form.Item className="send__form-item-offset">
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" disabled={!reCaptchaVerify}>
                         Отправить!
                     </Button>
                 </Form.Item>

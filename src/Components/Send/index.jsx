@@ -1,15 +1,19 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef } from 'react';
 
 import config from '../../config';
 
 import SendComponent from './Send';
 
 const SendContainer = props => {
+    const [reCaptchaVerify, setReCaptchaVerify] = useState(false);
     const reCaptchaRef = useRef(null);
 
     const handleSubmit = formData => {
-        reCaptchaRef.current.execute();
-        console.log(formData);
+        reCaptchaRef.current.getResponse().then(value => {
+            formData = { ...formData, captcha: value };
+        });
+
+        reCaptchaRef.current.reset();
     };
 
     const initialValuesItem = 'initial_form_values';
@@ -28,6 +32,8 @@ const SendContainer = props => {
             handleSubmit={handleSubmit}
             getInitialValues={getInitialValues}
             setInitialValue={setInitialValue}
+            reCaptchaVerify={reCaptchaVerify}
+            setReCaptchaVerify={setReCaptchaVerify}
             reCaptchaRef={reCaptchaRef}
         />
     );
