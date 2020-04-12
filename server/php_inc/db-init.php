@@ -26,9 +26,9 @@ $createTableQuery = "CREATE TABLE IF NOT EXISTS games(
         email TINYTEXT NOT NULL,
         genre TINYTEXT,
         description TEXT,
-        tools TEXT,
-        archive TEXT NOT NULL,
-        screenshot TEXT NOT NULL,
+        tools TINYTEXT,
+        archive TINYTEXT NOT NULL,
+        screenshot TINYTEXT NOT NULL,
         date DATETIME NOT NULL,
         PRIMARY KEY (id)
     ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8mb4";
