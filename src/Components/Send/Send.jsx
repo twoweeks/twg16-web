@@ -9,12 +9,12 @@ import './Send.scss';
 const { TextArea } = Input;
 
 const SendComponent = props => {
-    const { config } = props;
+    const { config, formIsOpen } = props;
     const { handleSubmit } = props;
     const { getInitialValues, setInitialValue } = props;
     const { reCaptchaVerify, setReCaptchaVerify, reCaptchaRef } = props;
 
-    return (
+    return formIsOpen ? (
         <div className="send">
             <Form className="send__form" initialValues={{ ...getInitialValues() }} onFinish={handleSubmit}>
                 <Form.Item
@@ -102,6 +102,10 @@ const SendComponent = props => {
                     </Button>
                 </Form.Item>
             </Form>
+        </div>
+    ) : (
+        <div className="send send--closed">
+            <h3>Форма закрыта</h3>
         </div>
     );
 };

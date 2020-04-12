@@ -28,7 +28,7 @@ class DB_EDITOR
 
     public function getGames()
     {
-        $query = $this->DB->prepare('SELECT id, title, email, genre, description, tools, archive, screenshot, ip, date FROM games');
+        $query = $this->DB->prepare('SELECT id, title, email, genre, description, tools, archive, screenshot, date FROM games');
 
         $query->execute();
 
@@ -49,7 +49,7 @@ class DB_EDITOR
         $query->close();
     }
 
-    public function add($contest, $title, $email, $genre, $description, $tools, $archive, $screenshot, $ip, $date)
+    public function add($contest, $title, $email, $genre, $description, $tools, $archive, $screenshot, $date)
     {
         $contest = intval($contest);
         $title = $this->prepareString($title);
@@ -59,6 +59,7 @@ class DB_EDITOR
         $tools = $this->prepareString($tools);
         $archive = $this->prepareString($archive);
         $screenshot = $this->prepareString($screenshot);
+        $date = $this->prepareString($date);
 
         if ($title === '' || $email === '' || $archive === '' || $screenshot === '') {
             $this->result(2, 'Ошибка добавления игры: отправлены пустые данные');
@@ -74,7 +75,6 @@ class DB_EDITOR
             'tools' => $tools,
             'archive' => $archive,
             'screenshot' => $screenshot,
-            'ip' => $ip,
             'date' => $date,
         ];
 
@@ -87,7 +87,6 @@ class DB_EDITOR
 				tools,
 				archive,
 				screenshot,
-				ip,
 				date
 			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
@@ -101,7 +100,6 @@ class DB_EDITOR
             $game['tools'],
             $game['archive'],
             $game['screenshot'],
-            $game['ip'],
             $game['date']
         );
 

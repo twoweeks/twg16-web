@@ -17,6 +17,11 @@
         }
     }
 
+    &--closed {
+        text-align: center;
+        padding: 10px;
+    }
+
     .ant {
         &-form {
             &-item {
