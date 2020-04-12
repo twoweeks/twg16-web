@@ -49,9 +49,10 @@ class DB_EDITOR
         $query->close();
     }
 
-    public function add($contest, $title, $email, $genre, $description, $tools, $archive, $screenshot, $date)
+    public function add($contest, $stage, $title, $email, $genre, $description, $tools, $archive, $screenshot, $date)
     {
         $contest = intval($contest);
+        $stage = $this->prepareString($stage);
         $title = $this->prepareString($title);
         $email = $this->prepareString($email);
         $genre = $this->prepareString($genre);
@@ -66,46 +67,24 @@ class DB_EDITOR
             return;
         }
 
-        $game = [
-            'contest' => $contest,
-            'title' => $title,
-            'email' => $email,
-            'genre' => $genre,
-            'description' => $description,
-            'tools' => $tools,
-            'archive' => $archive,
-            'screenshot' => $screenshot,
-            'date' => $date,
-        ];
-
         $query = $this->DB->prepare("INSERT INTO games (
-				contest,
-				title,
-				email,
-				genre,
-				description,
-				tools,
-				archive,
-				screenshot,
-				date
-			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                contest,
+                stage,
+                title,
+                email,
+                genre,
+                description,
+                tools,
+                archive,
+                screenshot,
+                date
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        $query->bind_param(
-            'isssssssss',
-            $game['contest'],
-            $game['title'],
-            $game['email'],
-            $game['genre'],
-            $game['description'],
-            $game['tools'],
-            $game['archive'],
-            $game['screenshot'],
-            $game['date']
-        );
+        $query->bind_param('isssssssss', $contest, $stage, $title, $email, $genre, $description, $tools, $archive, $screenshot, $date);
 
         $queryState = $query->execute()
-            ? $this->result(1, 'Игра "' . $game['title'] . '" добавлена', ['id' => $this->DB->insert_id])
-            : $this->result(2, 'Ошибка добавления игры: ' . $this->DB->error);
+            ? $this->result(1, 'Игра "' . $title . '" успешно отправлена', ['id' => $this->DB->insert_id])
+            : $this->result(2, 'Ошибка отправления игры: ' . $this->DB->error);
 
         $query->close();
     }
@@ -116,10 +95,10 @@ class DB_EDITOR
 
         $query = $this->DB->prepare('DELETE FROM games WHERE id = ?');
 
-        $query->bind_param('i', $bill_number);
+        $query->bind_param('i', $id);
 
         $queryState = $query->execute()
-            ? $this->result(1, 'Игра с id "' . $bill_number . '" удалена')
+            ? $this->result(1, 'Игра с id "' . $id . '" удалена')
             : $this->result(2, 'Ошибка удаления игры: ' . $this->DB->error);
 
         $query->close();

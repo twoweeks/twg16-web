@@ -9,14 +9,14 @@ import './Send.scss';
 const { TextArea } = Input;
 
 const SendComponent = props => {
-    const { config, formIsOpen } = props;
+    const { config, formInstance, formIsOpen } = props;
     const { handleSubmit } = props;
     const { getInitialValues, setInitialValue } = props;
     const { reCaptchaVerify, setReCaptchaVerify, reCaptchaRef } = props;
 
     return formIsOpen ? (
         <div className="send">
-            <Form className="send__form" initialValues={{ ...getInitialValues() }} onFinish={handleSubmit}>
+            <Form form={formInstance} className="send__form" initialValues={{ ...getInitialValues() }} onFinish={handleSubmit}>
                 <Form.Item
                     name="title"
                     label="Название игры"

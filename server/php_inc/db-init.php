@@ -19,17 +19,18 @@ try {
 }
 
 $createTableQuery = "CREATE TABLE IF NOT EXISTS games(
-		id INT NOT NULL AUTO_INCREMENT,
+        id INT NOT NULL AUTO_INCREMENT,
         contest INT NOT NULL,
-		title TINYTEXT NOT NULL,
-		email TINYTEXT NOT NULL,
-		genre TINYTEXT,
-		description TEXT,
-		tools TEXT,
-		archive TEXT NOT NULL,
-		screenshot TEXT NOT NULL,
-		date DATETIME NOT NULL,
-		PRIMARY KEY (id)
+        stage TINYTEXT NOT NULL,
+        title TINYTEXT NOT NULL,
+        email TINYTEXT NOT NULL,
+        genre TINYTEXT,
+        description TEXT,
+        tools TEXT,
+        archive TEXT NOT NULL,
+        screenshot TEXT NOT NULL,
+        date DATETIME NOT NULL,
+        PRIMARY KEY (id)
     ) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8mb4";
 
 $DB->query($createTableQuery);

@@ -8,7 +8,10 @@ const config = {
         rules: 'https://16.twg.host/p/rules.html',
     },
 
-    host: 'http://localhost',
+    host: {
+        url: 'http://localhost',
+        endpoint: 'request.php',
+    },
 
     api_keys: {
         recaptcha: '',

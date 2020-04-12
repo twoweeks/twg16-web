@@ -2,8 +2,18 @@ import ky from 'ky';
 
 import config from '../config';
 
-const api = ky.create({ prefixUrl: config.host });
+const api = ky.create({ prefixUrl: config.host.url });
 
-export const getStatus = async () => {
-    return await api.get('request.php?get-status').then(r => r.json());
+export const getQuery = async (subject = 'status', authKey) => {
+    return await api.get(`${config.host.endpoint}?get=${subject}${authKey ? '&key=' + authKey : ''}`).then(r => r.json());
+};
+
+export const postQuery = async (body, authKey) => {
+    const formData = new FormData();
+
+    Object.keys(body).forEach(key => {
+        formData.append(key, body[key]);
+    });
+
+    return await api.post(`${config.host.endpoint}${authKey ? '&key=' + authKey : ''}`, { body: formData }).then(r => r.json());
 };

@@ -19,6 +19,11 @@ $config = [
         'closed' => 'closed',
     ],
 
+    'stages' => [
+        'demo' => 'demo',
+        'final' => 'final',
+    ],
+
     'db' => [
         'name' => '',
         'user' => '',

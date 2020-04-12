@@ -1,35 +1,42 @@
 import React, { useState, useRef } from 'react';
+import { Form, message } from 'antd';
 
 import config from '../../config';
 
-import { getStatus } from '../../api';
+import { getQuery, postQuery } from '../../api';
 
 import SendComponent from './Send';
 
 const SendContainer = props => {
-    const [reCaptchaVerify, setReCaptchaVerify] = useState(false);
+    const [formInstance] = Form.useForm();
     const [formIsOpen, setFormIsOpen] = useState(false);
+
+    const [reCaptchaVerify, setReCaptchaVerify] = useState(false);
     const reCaptchaRef = useRef(null);
 
-    getStatus().then(data => {
-        if (data.code && data.code === 1) {
-            switch (data.status) {
-                case 'open':
-                    setFormIsOpen(true);
-                    break;
-                case 'closed':
-                    setFormIsOpen(false);
-                    break;
-                default:
-            }
+    message.config({ duration: 5 });
+
+    getQuery('status').then(data => {
+        if (data.code && data.code === 1 && data.data.status === 'open') {
+            setFormIsOpen(true);
         }
     });
 
     const handleSubmit = formData => {
         reCaptchaRef.current.getResponse().then(value => {
-            formData = { ...formData, captcha: value };
+            formData = { ...formData, action: 'add', captcha: value };
+
+            postQuery(formData).then(data => {
+                if (data.code === 1) {
+                    message.success(data.msg);
+                    message.info('Значения некоторых полей сохранены для повторного использования');
+                } else {
+                    message.warning(data.msg);
+                }
+            });
         });
 
+        formInstance.resetFields();
         reCaptchaRef.current.reset();
     };
 
@@ -43,11 +50,10 @@ const SendContainer = props => {
         localStorage.setItem(initialValuesItem, JSON.stringify({ ...getInitialValues(), [event.target.id]: event.target.value }));
     };
 
-    console.log(formIsOpen);
-
     return (
         <SendComponent
             config={config}
+            formInstance={formInstance}
             formIsOpen={formIsOpen}
             handleSubmit={handleSubmit}
             getInitialValues={getInitialValues}

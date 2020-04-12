@@ -20,6 +20,7 @@ function getStatus()
 {
     $config = $GLOBALS['config'];
     $status = $config['statuses']['closed'];
+    $stage = $config['stages']['demo'];
 
     $time_demo_start = $config['time']['demo'] - $config['time']['open'];
     $time_demo_end = $config['time']['demo'] + $config['time']['extra'];
@@ -27,29 +28,45 @@ function getStatus()
     $time_final_start = $config['time']['final'] - $config['time']['open'];
     $time_final_end = $config['time']['final'] + $config['time']['extra'];
 
-    if (($time_demo_start <= time() && time() <= $time_demo_end) || ($time_final_start <= time() && time() <= $time_final_end)) {
+    if ($time_demo_start <= time() && time() <= $time_demo_end) {
         $status = $config['statuses']['open'];
+        $stage = $config['stages']['demo'];
     }
 
-    return $status;
-}
+    if ($time_final_start <= time() && time() <= $time_final_end) {
+        $status = $config['statuses']['open'];
+        $stage = $config['stages']['final'];
+    }
 
-if (array_key_exists('get-status', $_GET)) {
-    $result = [
-        'code' => 1,
-        'status' => getStatus(),
+    return [
+        'status' => $status,
+        'stage' => $stage,
     ];
 }
 
-switch ($_POST['action']) {
-    case 'get-status':
+$captchaCondition = false;
+
+if (isset($_POST['captcha'])) {
+    $recaptchaResponse = file_get_contents(
+        'https://www.google.com/recaptcha/api/siteverify?secret=' . $config['keys']['recaptcha'] . '&response=' . $_POST['captcha']
+    );
+
+    $recaptchaResponseData = json_decode($recaptchaResponse);
+
+    if ($recaptchaResponseData->success == true && $recaptchaResponseData->hostname == $_SERVER['SERVER_NAME']) {
+        $captchaCondition = true;
+    }
+}
+
+switch ($_GET['get']) {
+    case 'status':
         $result = [
             'code' => 1,
-            'status' => getStatus(),
+            'data' => getStatus(),
         ];
         break;
 
-    case 'get-games':
+    case 'games':
         if ($_GET['key'] === $config['keys']['auth']) {
             $db->getGames();
         } else {
@@ -59,24 +76,34 @@ switch ($_POST['action']) {
             ];
         }
         break;
+}
 
+switch ($_POST['action']) {
     case 'add':
-        if (getStatus() === $config['statuses']['open']) {
-            $db->add(
-                $config['contest']['num'],
-                $_POST['title'],
-                $_POST['email'],
-                $_POST['genre'],
-                $_POST['description'],
-                $_POST['tools'],
-                $_POST['archive'],
-                $_POST['screenshot'],
-                date('Y-m-d H:i:s')
-            );
+        if ($captchaCondition) {
+            if (getStatus()['status'] === $config['statuses']['open']) {
+                $db->add(
+                    $config['contest']['num'],
+                    getStatus()['stage'],
+                    $_POST['title'],
+                    $_POST['email'],
+                    $_POST['genre'],
+                    $_POST['description'],
+                    $_POST['tools'],
+                    $_POST['archive'],
+                    $_POST['screenshot'],
+                    date('Y-m-d H:i:s')
+                );
+            } else {
+                $result = [
+                    'code' => 4,
+                    'msg' => 'Игра отправлена не в срок',
+                ];
+            }
         } else {
             $result = [
                 'code' => 4,
-                'msg' => 'Игра отправлена не в срок. Напишите на почту организатору',
+                'msg' => 'Капча не пройдена',
             ];
         }
         break;
