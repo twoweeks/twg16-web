@@ -15,5 +15,5 @@ export const postQuery = async (body, authKey) => {
         formData.append(key, body[key]);
     });
 
-    return await api.post(`${config.host.endpoint}${authKey ? '&key=' + authKey : ''}`, { body: formData }).then(r => r.json());
+    return await api.post(`${config.host.endpoint}${authKey ? '?key=' + authKey : ''}`, { body: formData }).then(r => r.json());
 };

@@ -1,0 +1,8 @@
+.view {
+    padding: 10px;
+    overflow-x: auto;
+
+    &--noauth {
+        text-align: center;
+    }
+}

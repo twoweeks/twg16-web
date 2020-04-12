@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form, message } from 'antd';
 
 import config from '../../config';
@@ -16,11 +16,13 @@ const SendContainer = props => {
 
     message.config({ duration: 5 });
 
-    getQuery('status').then(data => {
-        if (data.code && data.code === 1 && data.data.status === 'open') {
-            setFormIsOpen(true);
-        }
-    });
+    useEffect(() => {
+        getQuery('status').then(data => {
+            if (data.code && data.code === 1 && data.data.status === 'open') {
+                setFormIsOpen(true);
+            }
+        });
+    }, []);
 
     const handleSubmit = formData => {
         reCaptchaRef.current.getResponse().then(value => {
