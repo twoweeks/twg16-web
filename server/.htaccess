@@ -12,7 +12,7 @@ Options All -Indexes
 # Header set Strict-Transport-Security 'max-age=31536000; includeSubDomains; preload' env=HTTPS
 
 Header set Content-Security-Policy "default-src 'self'; \
- frame-ancestors 'self' https://*.twg.host https://twg.host https://*.gdjams.ru https://gdjams.ru; \
+ frame-ancestors 'self' https://*.twg.host https://twg.host https://gdjams.ru; \
  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; \
  font-src 'self' https://fonts.gstatic.com; \
  img-src 'self' data:; \

@@ -8,11 +8,11 @@
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "eslint": "eslint src/",
-        "prettier": "prettier --write **/*.{html,js,jsx,css,scss}",
+        "prettier": "prettier --write **/*.{html,js,jsx,json,scss,php}",
         "lint-staged": "lint-staged"
     },
     "lint-staged": {
-        "*.{html,js,jsx,css,scss}": [
+        "*.{html,js,jsx,json,scss,php}": [
             "prettier --write"
         ]
     },
@@ -43,6 +43,7 @@
         "reaptcha": "^1.7.2"
     },
     "devDependencies": {
+        "@prettier/plugin-php": "^0.14.0",
         "eslint-config-prettier": "^6.10.1",
         "eslint-plugin-prettier": "^3.1.2",
         "husky": "^4.2.5",

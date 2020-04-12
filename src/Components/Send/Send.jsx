@@ -18,16 +18,16 @@ const SendComponent = props => {
         <div className="send">
             <Form className="send__form" initialValues={{ ...getInitialValues() }} onFinish={handleSubmit}>
                 <Form.Item
+                    name="title"
                     label="Название игры"
                     extra="Максимум 100 символов"
-                    name="title"
                     rules={[{ required: true, message: 'Введите название игры' }]}>
                     <Input placeholder="Корованы: The Videogame" onInput={setInitialValue} />
                 </Form.Item>
 
                 <Form.Item
-                    label="Почта"
                     name="email"
+                    label="Почта"
                     rules={[
                         { type: 'email', message: 'Введите валидную почту' },
                         { required: true, message: 'Введите свою почту' },
@@ -35,19 +35,11 @@ const SendComponent = props => {
                     <Input placeholder="kirillsupergamedev@yandex.ru" onInput={setInitialValue} />
                 </Form.Item>
 
-                <Form.Item
-                    label="Пароль"
-                    extra="Будет необходим для подтверждения того, что именно вы ранее отправляли демоверсию. Хранится в открытом виде, так что не пишите сюда свой реальный пароль. Максимум 32 символа"
-                    name="password"
-                    rules={[{ required: true, message: 'Введите пароль' }]}>
-                    <Input.Password maxLength="32" onInput={setInitialValue} />
+                <Form.Item name="genre" label="Жанр игры" extra="Максимум 50 символов">
+                    <Input placeholder="Адвенчура" onInput={setInitialValue} maxLength="50" />
                 </Form.Item>
 
-                <Form.Item label="Жанр игры" name="genre">
-                    <Input placeholder="Адвенчура" onInput={setInitialValue} />
-                </Form.Item>
-
-                <Form.Item label="Описание игры" extra="Максимум 200 символов, без переносов на новую строку" name="description">
+                <Form.Item name="description" label="Описание игры" extra="Максимум 200 символов, без переносов на новую строку">
                     <TextArea
                         rows={4}
                         maxLength="200"
@@ -56,13 +48,13 @@ const SendComponent = props => {
                     />
                 </Form.Item>
 
-                <Form.Item label="Инструменты" extra="Максимум 100 символов, без переносов на новую строку" name="tools">
+                <Form.Item name="tools" label="Инструменты" extra="Максимум 100 символов, без переносов на новую строку">
                     <TextArea rows={2} maxLength="200" placeholder="Unity, Blender, Paint" onInput={setInitialValue} />
                 </Form.Item>
 
                 <Form.Item
-                    label="Архив с игрой"
                     name="archive"
+                    label="Архив с игрой"
                     extra={`Рекомендуется использовать Яндекс.Диск или Google Drive`}
                     rules={[
                         { type: 'url', message: 'Введите валидный URL' },
@@ -72,8 +64,8 @@ const SendComponent = props => {
                 </Form.Item>
 
                 <Form.Item
-                    label="Скриншот"
                     name="screenshot"
+                    label="Скриншот"
                     extra={`Рекомендуется использовать Imgur или VK`}
                     rules={[
                         { type: 'url', message: 'Введите валидный URL' },
@@ -83,8 +75,8 @@ const SendComponent = props => {
                 </Form.Item>
 
                 <Form.Item
-                    className="send__form-item-offset"
                     name="ready"
+                    className="send__form-item-offset"
                     valuePropName="checked"
                     rules={[{ validator: (_, value) => (value ? Promise.resolve() : Promise.reject('Подтвердите готовность')) }]}>
                     <Checkbox>
