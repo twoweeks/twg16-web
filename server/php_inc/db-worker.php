@@ -28,7 +28,7 @@ class DB_EDITOR
 
     public function getGames()
     {
-        $query = $this->DB->prepare('SELECT id, title, email, genre, description, tools, archive, screenshot, date FROM games');
+        $query = $this->DB->prepare('SELECT id,contest, stage, title, email, genre, description, tools, archive, screenshot, date FROM games');
 
         $query->execute();
 
