@@ -6,6 +6,11 @@ AddDefaultCharset utf-8
 
 Options All -Indexes
 
+<Files ~ "\.map$">
+    Order allow, deny
+    Deny from all
+</Files>
+
 # Content Security Policy
 
 <IfModule mod_headers.c>

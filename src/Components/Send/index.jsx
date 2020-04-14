@@ -40,18 +40,22 @@ const SendContainer = props => {
         reCaptchaRef.current.getResponse().then(value => {
             formData = { ...formData, action: 'add', captcha: value };
 
-            postQuery(formData).then(data => {
-                if (data.code === 1) {
-                    message.success(data.msg);
+            postQuery(formData)
+                .then(data => {
+                    if (data.code === 1) {
+                        message.success(data.msg);
 
-                    // в хроме поля не сохраняются, если приложение открыто в фрейме
-                    if (window === window.top) {
-                        message.info('Значения некоторых полей сохранены для повторного использования');
+                        // в хроме поля не сохраняются, если приложение открыто в фрейме
+                        if (window === window.top) {
+                            message.info('Значения некоторых полей сохранены для повторного использования');
+                        }
+                    } else {
+                        message.warning(data.msg);
                     }
-                } else {
-                    message.warning(data.msg);
-                }
-            });
+                })
+                .catch(error => {
+                    message.warning(error);
+                });
         });
 
         formInstance.resetFields();

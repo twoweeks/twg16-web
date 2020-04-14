@@ -79,7 +79,7 @@ const SendComponent = props => {
                     <FormItem
                         name="archive"
                         label="Архив с игрой"
-                        extra="Рекомендуется использовать Яндекс.Диск или Google Drive. Максимум 100 символов"
+                        extra="Рекомендуется использовать Яндекс.Диск, Google Drive или Firefox Send. Максимум 100 символов"
                         rules={[
                             { type: 'url', message: 'Введите валидный URL' },
                             { required: true, message: 'Добавьте ссылку на архив' },
@@ -120,7 +120,6 @@ const SendComponent = props => {
                             sitekey={config.api_keys.recaptcha}
                             onVerify={token => {
                                 setReCaptchaVerify(true);
-                                console.log(token);
                             }}
                         />
                     </Form.Item>
