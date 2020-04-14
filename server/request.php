@@ -1,7 +1,7 @@
 <?php
 
 include_once 'php_inc/config.php';
-include_once 'php_inc/db-worker.php';
+include_once 'php_inc/db-editor.php';
 
 $result = [
     // 0 - пустые запросы, 1 - успех, 2 - ошибка в скриптах, 3 - ошибка сервера, 4 - ошибка клиента
@@ -109,8 +109,8 @@ switch ($_POST['action']) {
         break;
 
     case 'rm':
-        if ($_GET['key'] === $config['keys']['auth']) {
-            $db->rm($_POST['id']);
+        if ($_POST['key'] === $config['keys']['auth']) {
+            $db->rm($_POST['targets']);
         } else {
             $result = [
                 'code' => 4,

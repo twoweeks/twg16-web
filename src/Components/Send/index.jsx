@@ -8,6 +8,9 @@ import { getQuery, postQuery } from '../../api';
 import SendComponent from './Send';
 
 const SendContainer = props => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
+
     const [formInstance] = Form.useForm();
     const [formIsOpen, setFormIsOpen] = useState(false);
 
@@ -17,11 +20,20 @@ const SendContainer = props => {
     message.config({ duration: 5 });
 
     useEffect(() => {
-        getQuery('status').then(data => {
-            if (data.code && data.code === 1 && data.data.status === 'open') {
-                setFormIsOpen(true);
-            }
-        });
+        setIsLoading(true);
+
+        getQuery('status')
+            .then(data => {
+                if (data.code && data.code === 1 && data.data.status === 'open') {
+                    setFormIsOpen(true);
+                }
+            })
+            .catch(error => {
+                setIsError(true);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, []);
 
     const handleSubmit = formData => {
@@ -31,7 +43,11 @@ const SendContainer = props => {
             postQuery(formData).then(data => {
                 if (data.code === 1) {
                     message.success(data.msg);
-                    message.info('Значения некоторых полей сохранены для повторного использования');
+
+                    // в хроме поля не сохраняются, если приложение открыто в фрейме
+                    if (window === window.top) {
+                        message.info('Значения некоторых полей сохранены для повторного использования');
+                    }
                 } else {
                     message.warning(data.msg);
                 }
@@ -54,6 +70,8 @@ const SendContainer = props => {
 
     return (
         <SendComponent
+            isLoading={isLoading}
+            isError={isError}
             config={config}
             formInstance={formInstance}
             formIsOpen={formIsOpen}

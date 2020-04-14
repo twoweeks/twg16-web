@@ -1,16 +1,17 @@
 import React from 'react';
-import { Table, Form, Radio, Button } from 'antd';
+import { Table, Form, Modal, Radio, Input, Button } from 'antd';
 
 import Link from '../Common/Link';
 
 import './View.scss';
 
 const ViewComponent = props => {
-    const { isAuth, gamesList } = props;
+    const { isAuth, gamesList, gamesListInitial } = props;
     const { gamesFilter, handleFilterChange } = props;
     const { gamesSort, handleSortChange } = props;
-    const { handleRemoveGame, handleGenerateCode } = props;
-    const { gamesToRemove, setGamesToRemove } = props;
+    const { handleGenerateCode, blogCode } = props;
+    const { gamesToRemove, setGamesToRemove, handleRemoveGame } = props;
+    const { currentModal, handleModalClose } = props;
 
     const columns = [
         {
@@ -64,7 +65,7 @@ const ViewComponent = props => {
             <div className="view__controls">
                 <Form>
                     <Form.Item label="Фильтр по стадии">
-                        <Radio.Group style={{ display: 'flex' }} onChange={handleFilterChange}>
+                        <Radio.Group className="view__form-radio" onChange={handleFilterChange}>
                             {[
                                 {
                                     value: 'all',
@@ -79,7 +80,12 @@ const ViewComponent = props => {
                                     label: 'Только финалки',
                                 },
                             ].map((item, i) => (
-                                <Radio.Button style={{ width: '100%' }} key={i} value={item.value} checked={item.value === gamesFilter}>
+                                <Radio.Button
+                                    className="view__form-radio-btn"
+                                    key={i}
+                                    value={item.value}
+                                    checked={item.value === gamesFilter}
+                                    disabled={gamesListInitial.length === 0}>
                                     {item.label}
                                 </Radio.Button>
                             ))}
@@ -87,7 +93,7 @@ const ViewComponent = props => {
                     </Form.Item>
 
                     <Form.Item label="Сортировка">
-                        <Radio.Group style={{ display: 'flex' }} onChange={handleSortChange}>
+                        <Radio.Group className="view__form-radio" onChange={handleSortChange}>
                             {[
                                 {
                                     value: 'no',
@@ -103,7 +109,7 @@ const ViewComponent = props => {
                                 },
                             ].map((item, i) => (
                                 <Radio.Button
-                                    style={{ width: '100%' }}
+                                    className="view__form-radio-btn"
                                     key={i}
                                     value={item.value}
                                     checked={item.value === gamesSort}
@@ -120,7 +126,7 @@ const ViewComponent = props => {
                                 Сгенерировать код для блога
                             </Button>
                             <Button onClick={handleRemoveGame} disabled={gamesList.length === 0 || gamesToRemove.length === 0}>
-                                Удалить выбранную игру
+                                Удалить выбранные игры
                             </Button>
                         </Button.Group>
                     </Form.Item>
@@ -134,7 +140,7 @@ const ViewComponent = props => {
                 columns={columns}
                 pagination={false}
                 rowSelection={{
-                    type: 'radio',
+                    type: 'checkbox',
                     columnTitle: 'Удаление',
                     onChange: selectedKeys => {
                         if (!Array.isArray(selectedKeys)) {
@@ -144,6 +150,10 @@ const ViewComponent = props => {
                     },
                 }}
             />
+
+            <Modal visible={currentModal === 'code'} width="90%" footer={null} closable={false} onCancel={handleModalClose}>
+                <Input.TextArea rows={20} value={blogCode} />
+            </Modal>
         </div>
     ) : (
         <div className="view view--noauth">

@@ -5,4 +5,25 @@
     &--noauth {
         text-align: center;
     }
+
+    &__form {
+        &-radio {
+            display: flex;
+
+            &-btn {
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                width: 100%;
+                height: auto;
+
+                padding: 5px 15px;
+
+                text-align: center;
+                line-height: 1.5;
+            }
+        }
+    }
 }

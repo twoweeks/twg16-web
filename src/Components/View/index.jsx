@@ -17,11 +17,16 @@ const ViewContainer = props => {
 
     const [gamesToRemove, setGamesToRemove] = useState([]);
 
+    const [currentModal, setCurrentModal] = useState(null);
+
+    const [blogCode, setBlogCode] = useState(null);
+
     const location = useLocation();
     const locationSeatchParams = new URLSearchParams(location.search);
 
     useEffect(() => {
         getQuery('games', locationSeatchParams.get('key')).then(data => {
+            // TODO: якобы не авторизует, когда список игр пуст
             if (data.code === 1) {
                 setIsAuth(true);
 
@@ -39,14 +44,22 @@ const ViewContainer = props => {
 
     const handleRemoveGame = () => {
         if (gamesToRemove.length !== 0) {
-            const target = gamesToRemove[0];
+            const targets = gamesToRemove;
 
-            postQuery({ action: 'rm', id: target }, locationSeatchParams.get('key')).then(data => {
+            postQuery({ action: 'rm', key: locationSeatchParams.get('key'), targets: JSON.stringify(targets) }).then(data => {
                 if (data.code === 1) {
-                    message.success(data.msg);
+                    let gamesListInitialFiltred = [];
+                    let gamesListFiltred = [];
 
-                    setGamesListInitial(gamesListInitial.filter(item => item.id !== target));
-                    setGamesList(gamesList.filter(item => item.id !== target));
+                    targets.forEach(target => {
+                        gamesListInitialFiltred = gamesListInitial.filter(item => item.id !== target);
+                        gamesListFiltred = gamesList.filter(item => item.id !== target);
+                    });
+
+                    setGamesListInitial(gamesListInitialFiltred);
+                    setGamesList(gamesListFiltred);
+
+                    message.success(data.msg);
                 } else {
                     message.warning(data.msg);
                 }
@@ -109,22 +122,48 @@ const ViewContainer = props => {
         setGamesList(sortedGamesList);
     };
 
+    const handleModalClose = () => {
+        setCurrentModal(null);
+    };
+
     const handleGenerateCode = _gamesList => {
-        message.info('Coming soon');
+        let output = '<div class="games-container">\r\n';
+
+        gamesList.forEach(game => {
+            output +=
+                `\t<div class="game">` +
+                `\r\n\t\t<picture class="game__picture"><img src="${game.link_screenshot}" alt="screenshot"></picture>` +
+                `\r\n\t\t<div class="game__info">` +
+                `\r\n\t\t\t<h3 class="game__info--title">${game.title}</h3>` +
+                (game.genre ? `\r\n\t\t\t<p class="game__info--genre">${game.genre}</p>` : '') +
+                (game.description ? `\r\n\t\t\t<p class="game__info--description">${game.description.replace(/\n/g, '<br>')}</p>` : '') +
+                `\r\n\t\t\t<a class="game__info--link" href="${game.link_archive}" target="_blank" rel="nofollow noopener"><span>скачать</span></a>` +
+                `\r\n\t\t</div>` +
+                `\r\n\t</div>\r\n`;
+        });
+
+        output += '</div>';
+
+        setBlogCode(output);
+        setCurrentModal('code');
     };
 
     return (
         <ViewComponent
             isAuth={isAuth}
             gamesList={gamesList}
+            gamesListInitial={gamesListInitial}
             gamesFilter={gamesFilter}
             handleFilterChange={handleFilterChange}
             gamesSort={gamesSort}
             handleSortChange={handleSortChange}
             handleRemoveGame={handleRemoveGame}
             handleGenerateCode={handleGenerateCode}
+            blogCode={blogCode}
             gamesToRemove={gamesToRemove}
             setGamesToRemove={setGamesToRemove}
+            currentModal={currentModal}
+            handleModalClose={handleModalClose}
         />
     );
 };

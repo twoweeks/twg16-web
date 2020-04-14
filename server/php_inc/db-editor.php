@@ -55,9 +55,9 @@ class DB_EDITOR
         $stage = $this->prepareString($stage);
         $title = substr($this->prepareString($title), 0, 100);
         $email = substr($this->prepareString($email), 0, 50);
-        $genre = substr($this->prepareString($genre), 0, 50);
-        $description = substr($this->prepareString($description), 0, 200);
-        $tools = substr($this->prepareString($tools), 0, 100);
+        $genre ? ($genre = substr($this->prepareString($genre), 0, 50)) : '';
+        $description ? ($description = substr($this->prepareString($description), 0, 200)) : '';
+        $tools ? ($tools = substr($this->prepareString($tools), 0, 100)) : '';
         $archive = substr($this->prepareString($archive), 0, 100);
         $screenshot = substr($this->prepareString($screenshot), 0, 100);
         $date = $this->prepareString($date);
@@ -89,17 +89,21 @@ class DB_EDITOR
         $query->close();
     }
 
-    public function rm($id)
+    public function rm($targets)
     {
-        $id = intval($id);
+        $targets = json_decode($targets);
 
-        $query = $this->DB->prepare('DELETE FROM games WHERE id = ?');
+        // tnx https://qna.habr.com/answer?answer_id=1292645
+        $clause = implode(',', array_fill(0, count($targets), '?'));
+        $types = str_repeat('i', count($targets));
 
-        $query->bind_param('i', $id);
+        $query = $this->DB->prepare("DELETE FROM games WHERE id IN ($clause)");
+
+        $query->bind_param($types, ...$targets);
 
         $queryState = $query->execute()
-            ? $this->result(1, 'Игра с id "' . $id . '" удалена')
-            : $this->result(2, 'Ошибка удаления игры: ' . $this->DB->error);
+            ? $this->result(1, 'Указанные игры успешно удалены')
+            : $this->result(2, 'Ошибка удаления: ' . $this->DB->error);
 
         $query->close();
     }

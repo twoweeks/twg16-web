@@ -1,4 +1,9 @@
 .send {
+    &__message {
+        font-size: 2em;
+        text-align: center;
+    }
+
     &__form {
         width: 100%;
         max-width: 600px;
