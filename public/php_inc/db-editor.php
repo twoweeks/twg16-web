@@ -53,13 +53,13 @@ class DB_EDITOR
     {
         $contest = intval($contest);
         $stage = $this->prepareString($stage);
-        $title = substr($this->prepareString($title), 0, 100);
-        $email = substr($this->prepareString($email), 0, 50);
-        $genre ? ($genre = substr($this->prepareString($genre), 0, 50)) : '';
-        $description ? ($description = substr($this->prepareString($description), 0, 200)) : '';
-        $tools ? ($tools = substr($this->prepareString($tools), 0, 100)) : '';
-        $archive = substr($this->prepareString($archive), 0, 100);
-        $screenshot = substr($this->prepareString($screenshot), 0, 100);
+        $title = mb_substr($this->prepareString($title), 0, 100);
+        $email = mb_substr($this->prepareString($email), 0, 50);
+        $genre = $genre ? mb_substr($this->prepareString($genre), 0, 50) : '';
+        $description = $description ? mb_substr($this->prepareString($description), 0, 200) : '';
+        $tools = $tools ? mb_substr($this->prepareString($tools), 0, 100) : '';
+        $archive = mb_substr($this->prepareString($archive), 0, 100);
+        $screenshot = mb_substr($this->prepareString($screenshot), 0, 100);
         $date = $this->prepareString($date);
 
         if ($title === '' || $email === '' || $archive === '' || $screenshot === '') {
