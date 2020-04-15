@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Button } from 'antd';
+import { Form, Button, Modal } from 'antd';
 import ReCAPTCHA from 'reaptcha';
 
 import FormItem from '../Common/FormItem';
@@ -12,6 +12,7 @@ const SendComponent = props => {
     const { formInstance, formIsOpen, handleSubmit } = props;
     const { getInitialValues, setInitialValue } = props;
     const { reCaptchaVerify, setReCaptchaVerify, reCaptchaRef } = props;
+    const { currentModal, handleModalClose } = props;
 
     return (
         <div className="send">
@@ -131,6 +132,14 @@ const SendComponent = props => {
                     </Form.Item>
                 </Form>
             )}
+            <Modal visible={currentModal.id === 'alert'} centered footer={null} closable={false} onCancel={handleModalClose}>
+                {currentModal.content && (
+                    <div className="send__alert">
+                        <div className="send__alert-emoji">{currentModal.content.emoji}</div>
+                        <div className="send__alert-text">{currentModal.content.text}</div>
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 };

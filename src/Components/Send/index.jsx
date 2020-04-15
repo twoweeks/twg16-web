@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form, message } from 'antd';
+import { Form } from 'antd';
 
 import config from '../../config';
 
@@ -14,10 +14,10 @@ const SendContainer = props => {
     const [formInstance] = Form.useForm();
     const [formIsOpen, setFormIsOpen] = useState(false);
 
+    const [currentModal, setCurrentModal] = useState({});
+
     const [reCaptchaVerify, setReCaptchaVerify] = useState(false);
     const reCaptchaRef = useRef(null);
-
-    message.config({ duration: 5 });
 
     useEffect(() => {
         setIsLoading(true);
@@ -42,19 +42,22 @@ const SendContainer = props => {
 
             postQuery(formData)
                 .then(data => {
-                    if (data.code === 1) {
-                        message.success(data.msg);
-
-                        // в хроме поля не сохраняются, если приложение открыто в фрейме
-                        if (window === window.top) {
-                            message.info('Значения некоторых полей сохранены для повторного использования');
-                        }
-                    } else {
-                        message.warning(data.msg);
-                    }
+                    setCurrentModal({
+                        id: 'alert',
+                        content: {
+                            emoji: data.code === 1 ? '☺️' : '😟',
+                            text: data.msg,
+                        },
+                    });
                 })
                 .catch(error => {
-                    message.warning(error);
+                    setCurrentModal({
+                        id: 'alert',
+                        content: {
+                            emoji: '😞',
+                            text: error,
+                        },
+                    });
                 });
         });
 
@@ -72,6 +75,10 @@ const SendContainer = props => {
         localStorage.setItem(initialValuesItem, JSON.stringify({ ...getInitialValues(), [event.target.id]: event.target.value }));
     };
 
+    const handleModalClose = () => {
+        setCurrentModal({});
+    };
+
     return (
         <SendComponent
             isLoading={isLoading}
@@ -85,6 +92,8 @@ const SendContainer = props => {
             reCaptchaVerify={reCaptchaVerify}
             setReCaptchaVerify={setReCaptchaVerify}
             reCaptchaRef={reCaptchaRef}
+            handleModalClose={handleModalClose}
+            currentModal={currentModal}
         />
     );
 };

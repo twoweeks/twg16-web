@@ -1,7 +1,20 @@
 .send {
+    &__message,
+    &__alert {
+        font-size: 1.5em;
+        text-align: center;
+    }
+
     &__message {
         font-size: 2em;
-        text-align: center;
+    }
+
+    &__alert {
+        font-size: 1.5em;
+
+        &-emoji {
+            font-size: 3em;
+        }
     }
 
     &__form {

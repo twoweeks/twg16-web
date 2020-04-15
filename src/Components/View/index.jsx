@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { message } from 'antd';
 
 import { getQuery, postQuery } from '../../api';
+import sortObject from '../../utilities/sortObject';
 
 import ViewComponent from './View';
 
@@ -48,16 +49,8 @@ const ViewContainer = props => {
 
             postQuery({ action: 'rm', key: locationSeatchParams.get('key'), targets: JSON.stringify(targets) }).then(data => {
                 if (data.code === 1) {
-                    let gamesListInitialFiltred = [];
-                    let gamesListFiltred = [];
-
-                    targets.forEach(target => {
-                        gamesListInitialFiltred = gamesListInitial.filter(item => item.id !== target);
-                        gamesListFiltred = gamesList.filter(item => item.id !== target);
-                    });
-
-                    setGamesListInitial(gamesListInitialFiltred);
-                    setGamesList(gamesListFiltred);
+                    setGamesListInitial(gamesListInitial.filter(item => !targets.includes(item.key)));
+                    setGamesList(gamesList.filter(item => !targets.includes(item.key)));
 
                     message.success(data.msg);
                 } else {
@@ -91,20 +84,6 @@ const ViewContainer = props => {
     const handleSortChange = e => {
         const value = e.target.value;
         let sortedGamesList = [];
-
-        const sortObject = (object, by) => {
-            const tmp = [...object];
-            tmp.sort((a, b) => {
-                if (a[by] < b[by]) {
-                    return -1;
-                }
-                if (a[by] > b[by]) {
-                    return 1;
-                }
-                return 0;
-            });
-            return tmp;
-        };
 
         switch (value) {
             case 'no':
