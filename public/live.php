@@ -10,6 +10,8 @@ $twitchContext = stream_context_create([
     ],
 ]);
 
+$liveFile = getcwd() . '/live.json';
+
 function getUserID($userLogin)
 {
     $url = $GLOBALS['twitchURL'] . '/users?login=' . $userLogin;
@@ -54,8 +56,11 @@ function getLiveStreams($channelIDs)
     return $result;
 }
 
-if ($_GET['login']) {
+if ($_GET['login'] && $_GET['key'] === $config['keys']['auth']) {
     print json_encode(getUserID($_GET['login']), JSON_UNESCAPED_UNICODE);
-} else {
-    file_put_contents(getcwd() . '/live.json', json_encode(getLiveStreams($config['twitch-channels']), JSON_UNESCAPED_UNICODE));
+}
+
+// файла может не быть +  защита от дудоса по скрипту
+if (!file_exists($liveFile) || abs(filemtime($liveFile) - time()) > 5) {
+    file_put_contents($liveFile, json_encode(getLiveStreams($config['twitch-channels']), JSON_UNESCAPED_UNICODE));
 }

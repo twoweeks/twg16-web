@@ -9,7 +9,7 @@ const config = {
     },
 
     host: {
-        url: 'http://localhost',
+        url: '/',
         endpoint: 'request.php',
     },
 

@@ -6,10 +6,11 @@ AddDefaultCharset utf-8
 
 Options All -Indexes
 
-<Files ~ "\.map$">
-    Order allow, deny
-    Deny from all
-</Files>
+<FilesMatch '\.(json)$'>
+	<IfModule mod_headers.c>
+		Header set Access-Control-Allow-Origin *
+	</IfModule>
+</FilesMatch>
 
 # Content Security Policy
 
