@@ -45,7 +45,7 @@ const SendContainer = props => {
                     setCurrentModal({
                         id: 'alert',
                         content: {
-                            emoji: data.code === 1 ? '☺️' : '😟',
+                            emoji: data.code === 1 ? '🙂' : '😟',
                             text: data.msg,
                         },
                     });

@@ -7,6 +7,8 @@ $config = [
         'num' => 16,
     ],
 
+    'twitch-channels' => [],
+
     'time' => [
         'demo' => strtotime('04/16/20 00:00'),
         'final' => strtotime('04/20/20 00:00'),
@@ -33,5 +35,6 @@ $config = [
     'keys' => [
         'auth' => '',
         'recaptcha' => '',
+        'twitch' => '',
     ],
 ];
