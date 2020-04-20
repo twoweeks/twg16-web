@@ -14,6 +14,10 @@ const FormItem = props => {
             formChild = <Input placeholder={placeholder} maxLength={maxLength} onInput={onInput} />;
             break;
 
+        case 'password':
+            formChild = <Input.Password placeholder={placeholder} maxLength={maxLength} onInput={onInput} />;
+            break;
+
         case 'textarea':
             formChild = <TextArea rows={rows} maxLength={maxLength} placeholder={placeholder} onInput={onInput} />;
             break;

@@ -5,7 +5,7 @@ import config from '../config';
 const api = ky.create({ prefixUrl: config.host.url });
 
 export const getQuery = async (subject = 'status', authKey) => {
-    return await api.get(`${config.host.endpoint}?get=${subject}${authKey ? '&key=' + authKey : ''}`).then(r => r.json());
+    return await api.get(`${config.host.endpoint}?get=${subject}${authKey ? '&authKey=' + authKey : ''}`).then(r => r.json());
 };
 
 export const postQuery = async body => {

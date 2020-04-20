@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { message } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Form, message } from 'antd';
+
+import config from '../../config';
 
 import { getQuery, postQuery } from '../../api';
 import sortObject from '../../utilities/sortObject';
@@ -9,6 +10,10 @@ import ViewComponent from './View';
 
 const ViewContainer = props => {
     const [isAuth, setIsAuth] = useState(false);
+    const [authFormInstance] = Form.useForm();
+
+    const [reCaptchaVerify, setReCaptchaVerify] = useState(false);
+    const reCaptchaRef = useRef(null);
 
     const [gamesList, setGamesList] = useState([]);
     const [gamesListInitial, setGamesListInitial] = useState([]);
@@ -22,11 +27,12 @@ const ViewContainer = props => {
 
     const [blogCode, setBlogCode] = useState(null);
 
-    const location = useLocation();
-    const locationSeatchParams = new URLSearchParams(location.search);
-
     useEffect(() => {
-        getQuery('games', locationSeatchParams.get('key')).then(data => {
+        getGames();
+    }, []);
+
+    const getGames = () => {
+        getQuery('games', localStorage.getItem('authKey')).then(data => {
             // TODO: якобы не авторизует, когда список игр пуст
             if (data.code === 1) {
                 setIsAuth(true);
@@ -41,13 +47,13 @@ const ViewContainer = props => {
                 message.error(data.msg);
             }
         });
-    }, []);
+    };
 
     const handleRemoveGame = () => {
         if (gamesToRemove.length !== 0) {
             const targets = gamesToRemove;
 
-            postQuery({ action: 'rm', key: locationSeatchParams.get('key'), targets: JSON.stringify(targets) }).then(data => {
+            postQuery({ action: 'rm', targets: JSON.stringify(targets), authKey: localStorage.getItem('authKey') }).then(data => {
                 if (data.code === 1) {
                     setGamesListInitial(gamesListInitial.filter(item => !targets.includes(item.key)));
                     setGamesList(gamesList.filter(item => !targets.includes(item.key)));
@@ -68,11 +74,9 @@ const ViewContainer = props => {
             case 'all':
                 filtredGamesList = gamesListInitial;
                 break;
-            case 'demo-stage':
-                filtredGamesList = gamesListInitial.filter(item => item.stage === 'demo');
-                break;
-            case 'final-stage':
-                filtredGamesList = gamesListInitial.filter(item => item.stage === 'final');
+            case 'demo':
+            case 'final':
+                filtredGamesList = gamesListInitial.filter(item => item.stage === value);
                 break;
             default:
         }
@@ -110,15 +114,16 @@ const ViewContainer = props => {
 
         gamesList.forEach(game => {
             output +=
-                `\t<div class="game">` +
-                `\r\n\t\t<picture class="game__picture"><img src="${game.link_screenshot}" alt="screenshot"></picture>` +
-                `\r\n\t\t<div class="game__info">` +
-                `\r\n\t\t\t<h3 class="game__info--title">${game.title}</h3>` +
-                (game.genre ? `\r\n\t\t\t<p class="game__info--genre">${game.genre}</p>` : '') +
-                (game.description ? `\r\n\t\t\t<p class="game__info--description">${game.description.replace(/\n/g, '<br>')}</p>` : '') +
-                `\r\n\t\t\t<a class="game__info--link" href="${game.link_archive}" target="_blank" rel="nofollow noopener"><span>скачать</span></a>` +
-                `\r\n\t\t</div>` +
-                `\r\n\t</div>\r\n`;
+                `  <div class="game">` +
+                `\r\n    <picture class="game__picture"></picture>` +
+                `\r\n    <div class="game__info">` +
+                `\r\n      <h3 class="game__info--title">${game.title}</h3>` +
+                (game.genre ? `\r\n      <p class="game__info--genre">${game.genre}</p>` : '') +
+                (game.description ? `\r\n      <p class="game__info--description">${game.description.replace(/\n/g, '<br>')}</p>` : '') +
+                (game.tools ? `\r\n      <p class="game__info--tools">${game.tools.replace(/\n/g, '')}</p>` : '') +
+                `\r\n      <a class="game__info--link" href="" target="_blank" rel="nofollow noopener"><span>скачать</span></a>` +
+                `\r\n    </div>` +
+                `\r\n  </div>\r\n`;
         });
 
         output += '</div>';
@@ -127,9 +132,30 @@ const ViewContainer = props => {
         setCurrentModal('code');
     };
 
+    const handleAuthSubmit = formData => {
+        reCaptchaRef.current.getResponse().then(value => {
+            formData = { ...formData, action: 'auth', captcha: value };
+
+            postQuery(formData).then(data => {
+                if (data.code === 1) {
+                    localStorage.setItem('authKey', formData['authKey']);
+                    setIsAuth(true);
+                    getGames();
+                    message.success(data.msg);
+                } else {
+                    message.warning(data.msg);
+                }
+            });
+        });
+
+        authFormInstance.resetFields();
+        reCaptchaRef.current.reset();
+    };
+
     return (
         <ViewComponent
             isAuth={isAuth}
+            config={config}
             gamesList={gamesList}
             gamesListInitial={gamesListInitial}
             gamesFilter={gamesFilter}
@@ -143,6 +169,11 @@ const ViewContainer = props => {
             setGamesToRemove={setGamesToRemove}
             currentModal={currentModal}
             handleModalClose={handleModalClose}
+            authFormInstance={authFormInstance}
+            handleAuthSubmit={handleAuthSubmit}
+            reCaptchaVerify={reCaptchaVerify}
+            setReCaptchaVerify={setReCaptchaVerify}
+            reCaptchaRef={reCaptchaRef}
         />
     );
 };

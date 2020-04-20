@@ -67,7 +67,7 @@ switch ($_GET['get']) {
         break;
 
     case 'games':
-        if ($_GET['key'] === $config['keys']['auth']) {
+        if ($_GET['authKey'] === $config['keys']['auth']) {
             $db->getGames();
         } else {
             $result = [
@@ -79,6 +79,27 @@ switch ($_GET['get']) {
 }
 
 switch ($_POST['action']) {
+    case 'auth':
+        if ($captchaCondition) {
+            if ($_POST['authKey'] === $config['keys']['auth']) {
+                $result = [
+                    'code' => 1,
+                    'msg' => 'Авторизация пройдена',
+                ];
+            } else {
+                $result = [
+                    'code' => 4,
+                    'msg' => $_POST['auth'] . ' s ' . $config['keys']['auth'],
+                ];
+            }
+        } else {
+            $result = [
+                'code' => 4,
+                'msg' => 'Капча не пройдена',
+            ];
+        }
+        break;
+
     case 'add':
         if ($captchaCondition) {
             if (getStatus()['status'] === $config['statuses']['open']) {
@@ -109,7 +130,7 @@ switch ($_POST['action']) {
         break;
 
     case 'rm':
-        if ($_POST['key'] === $config['keys']['auth']) {
+        if ($_POST['authKey'] === $config['keys']['auth']) {
             $db->rm($_POST['targets']);
         } else {
             $result = [

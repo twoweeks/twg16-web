@@ -1,23 +1,23 @@
 import React from 'react';
 import { Table, Form, Modal, Radio, Input, Button } from 'antd';
+import ReCAPTCHA from 'reaptcha';
 
 import Link from '../Common/Link';
+import FormItem from '../Common/FormItem';
 
 import './View.scss';
 
 const ViewComponent = props => {
-    const { isAuth, gamesList, gamesListInitial } = props;
+    const { isAuth, config, gamesList, gamesListInitial } = props;
     const { gamesFilter, handleFilterChange } = props;
     const { gamesSort, handleSortChange } = props;
     const { handleGenerateCode, blogCode } = props;
     const { gamesToRemove, setGamesToRemove, handleRemoveGame } = props;
     const { currentModal, handleModalClose } = props;
+    const { reCaptchaVerify, setReCaptchaVerify, reCaptchaRef } = props;
+    const { authFormInstance, handleAuthSubmit } = props;
 
     const columns = [
-        {
-            title: 'Конкурс',
-            dataIndex: 'contest',
-        },
         {
             title: 'Стадия',
             dataIndex: 'stage',
@@ -72,11 +72,11 @@ const ViewComponent = props => {
                                     label: 'Все игры',
                                 },
                                 {
-                                    value: 'demo-stage',
+                                    value: 'demo',
                                     label: 'Только демки',
                                 },
                                 {
-                                    value: 'final-stage',
+                                    value: 'final',
                                     label: 'Только финалки',
                                 },
                             ].map((item, i) => (
@@ -157,7 +157,30 @@ const ViewComponent = props => {
         </div>
     ) : (
         <div className="view view--noauth">
-            <h3>Вы не авторизованы</h3>
+            <Form form={authFormInstance} className="view__form-auth" onFinish={handleAuthSubmit}>
+                <FormItem
+                    type="password"
+                    name="authKey"
+                    rules={[{ required: true, message: 'Введите ключ' }]}
+                    placeholder="Ключ авторизации"
+                    maxLength="50"
+                />
+                <Form.Item className="send__form-item-offset">
+                    <ReCAPTCHA
+                        size="normal"
+                        ref={reCaptchaRef}
+                        sitekey={config.api_keys.recaptcha}
+                        onVerify={token => {
+                            setReCaptchaVerify(true);
+                        }}
+                    />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" disabled={!reCaptchaVerify}>
+                        Авторизоваться
+                    </Button>
+                </Form.Item>
+            </Form>
         </div>
     );
 };
