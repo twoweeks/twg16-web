@@ -1,6 +1,6 @@
 {
     "name": "twg16-web",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "private": true,
     "scripts": {
         "start": "react-scripts start",
@@ -34,7 +34,7 @@
         ]
     },
     "dependencies": {
-        "antd": "^4.1.4",
+        "antd": "^4.2.0",
         "ky": "^0.19.1",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
@@ -43,12 +43,12 @@
     },
     "devDependencies": {
         "@prettier/plugin-php": "^0.14.0",
-        "eslint-config-prettier": "^6.10.1",
+        "eslint-config-prettier": "^6.11.0",
         "eslint-plugin-prettier": "^3.1.3",
         "husky": "^4.2.5",
-        "lint-staged": "^10.1.6",
-        "prettier": "^2.0.4",
+        "lint-staged": "^10.2.2",
+        "prettier": "^2.0.5",
         "react-scripts": "3.4.1",
-        "sass": "^1.26.3"
+        "sass": "^1.26.5"
     }
 }

@@ -3,7 +3,7 @@
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 try {
-    $DB = new mysqli('127.0.0.1', $config['db']['user'], $config['db']['pass'], $config['db']['name']);
+    $DB = new mysqli($config['db']['host'], $config['db']['user'], $config['db']['pass'], $config['db']['name']);
     $DB->set_charset('utf8mb4');
 } catch (Exception $e) {
     error_log($e->getMessage());
